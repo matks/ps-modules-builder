@@ -1,15 +1,13 @@
 <?php
-/**
- * Created by PhpStorm.
- * User: mFerment
- * Date: 13/01/2020
- * Time: 17:21
- */
 
 namespace PrestaShop\ModuleBuilder;
 
-
 class ComposerInstaller
 {
+    public function installDependencies($targetDirectory)
+    {
+        $commandScript = 'php composer.phar install --no-dev --optimize-autoloader -d '.$targetDirectory;
 
+        exec($commandScript);
+    }
 }

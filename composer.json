@@ -4,12 +4,14 @@
   "license": "MIT",
   "require": {
     "symfony/console": "^3.4",
-    "symfony/filesystem": "~3.2 || ~4.0"
+    "symfony/filesystem": "~3.2 || ~4.0",
+    "sensiolabs/security-checker": "^6.0"
   },
   "bin": ["bin/ps-modules-builder"],
   "autoload": {
     "psr-4": {
-      "PrestaShop\\ModuleBuilder\\": "src/"
+      "PrestaShop\\ModuleBuilder\\": "src/",
+      "PrestaShopTests\\": "tests/"
     }
   }
 }
