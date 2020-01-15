@@ -15,6 +15,9 @@ $modulesToTest = [
     'autoupgrade' => ['ignore-dependency-check' => true],
     'dashactivity' => [],
     'gamification' => [],
+    'statsnewsletter' => [],
+    'ps_mainmenu' => [],
+    'productcomments' => [],
 ];
 $workspaceID = 100;
 
