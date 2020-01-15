@@ -5,6 +5,7 @@ namespace PrestaShop\ModuleBuilder;
 use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Input\InputArgument;
 use Symfony\Component\Console\Input\InputInterface;
+use Symfony\Component\Console\Input\InputOption;
 use Symfony\Component\Console\Output\OutputInterface;
 
 class BuildZIPArchiveCommand extends Command
@@ -33,12 +34,20 @@ class BuildZIPArchiveCommand extends Command
     {
         $this
             ->setDescription('Build ZIP archive for given module')
-            ->addArgument('module-folder', InputArgument::REQUIRED, 'module folder location');
+            ->addArgument('module-folder', InputArgument::REQUIRED, 'module folder location')
+            ->addOption(
+                'ignore-dependency-check',
+                null,
+                InputOption::VALUE_REQUIRED,
+                'Allows to ignore dependency check step result',
+                false
+            );
     }
 
     protected function execute(InputInterface $input, OutputInterface $output)
     {
         $moduleFolderpath = $input->getArgument('module-folder');
+        $ignoreDependencyCheck = $input->getOption('ignore-dependency-check');
 
         $workspaceID = md5(rand(0, 9999));
 
@@ -47,7 +56,9 @@ class BuildZIPArchiveCommand extends Command
         // 2. copy the module folder into workspace
         $this->commandHandler->copyModuleFolderIntoWorkspace($workspaceID, $moduleFolderpath);
         // 3. check composer dependencies
-        $this->commandHandler->checkComposerDependencies($workspaceID);
+        if ($ignoreDependencyCheck === false) {
+            $this->commandHandler->checkComposerDependencies($workspaceID);
+        }
         // 4. remove unwanted files and folders
         $this->commandHandler->removeUnwantedFilesAndDirectories($workspaceID);
         // 5. install composer dependencies

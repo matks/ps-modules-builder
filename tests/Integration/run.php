@@ -10,11 +10,11 @@ $buildZIPArchiveCommandHandler = new BuildZIPArchiveCommandHandler(__DIR__ . '/w
 $folderComparator = new FolderComparator();
 
 $modulesToTest = [
-    'blockreassurance',
-    'gsitemap',
-    // 'autoupgrade', security issues found because of outdated twig version
-    'dashactivity',
-    'gamification',
+    'blockreassurance' => [],
+    'gsitemap' => [],
+    'autoupgrade' => ['ignore-dependency-check' => true],
+    'dashactivity' => [],
+    'gamification' => [],
 ];
 $workspaceID = 100;
 
@@ -36,30 +36,37 @@ function printErrorsList($moduleName, $list)
     echo "\033[37m";
 }
 
-foreach ($modulesToTest as $module) {
+foreach ($modulesToTest as $moduleName => $config) {
     $workspaceID++;
-    $moduleFolderpath = __DIR__ . '/module-samples/' . $module;
-    $expectedModuleFolderpath = __DIR__ . '/expected/' . $module;
+    $moduleFolderpath = __DIR__ . '/module-samples/' . $moduleName;
+    $expectedModuleFolderpath = __DIR__ . '/expected/' . $moduleName;
     $workspaceFolderpath = __DIR__ . '/workspace/' . $workspaceID;
 
     $buildZIPArchiveCommandHandler->createWorkspace($workspaceID);
     $buildZIPArchiveCommandHandler->copyModuleFolderIntoWorkspace($workspaceID, $moduleFolderpath);
-    $buildZIPArchiveCommandHandler->checkComposerDependencies($workspaceID);
+
+    $skipDependyCheck = false;
+    if (array_key_exists('ignore-dependency-check', $config) && $config['ignore-dependency-check'] === true) {
+        $skipDependyCheck = true;
+    }
+    if ($skipDependyCheck === false) {
+        $buildZIPArchiveCommandHandler->checkComposerDependencies($workspaceID);
+    }
     $buildZIPArchiveCommandHandler->removeUnwantedFilesAndDirectories($workspaceID);
     $buildZIPArchiveCommandHandler->installComposerDependencies($workspaceID);
 
     $check = $folderComparator->compareFolders($expectedModuleFolderpath, $workspaceFolderpath, '');
     $check2 = $folderComparator->compareFolders($workspaceFolderpath, $expectedModuleFolderpath, '');
     if (!empty($check)) {
-        printErrorsList($module, $check);
+        printErrorsList($moduleName, $check);
         return 1;
     }
     if (!empty($check2)) {
-        printErrorsList($module, $check2);
+        printErrorsList($moduleName, $check2);
         return 1;
     }
 
-    echo ' - module ' . $module . ' built successfully' . PHP_EOL;
+    echo ' - module ' . $moduleName . ' built successfully' . PHP_EOL;
 }
 
 echo "Integration tests run successfully" . PHP_EOL;
