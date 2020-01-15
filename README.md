@@ -18,8 +18,10 @@ $ composer install
 ## Run
 
 ```
-$ php modules-builder.php build-zip
+$ php modules-builder.php build-zip [module_folder]
 ```
+
+ZIP archives are built into the `var` folder.
 
 ## Tests
 

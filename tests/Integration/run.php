@@ -13,11 +13,11 @@ $modulesToTest = [
     'blockreassurance' => [],
     'gsitemap' => [],
     'autoupgrade' => ['ignore-dependency-check' => true],
-    'dashactivity' => [],
+    'dashactivity' => ['test-zip' => true, 'zip-name' => 'dashactivity-2.0.2.zip'],
     'gamification' => [],
     'statsnewsletter' => [],
     'ps_mainmenu' => [],
-    'productcomments' => [],
+    'productcomments' => ['test-zip' => true, 'zip-name' => 'productcomments-4.0.1.zip'],
 ];
 $workspaceID = 100;
 
@@ -67,6 +67,18 @@ foreach ($modulesToTest as $moduleName => $config) {
     if (!empty($check2)) {
         printErrorsList($moduleName, $check2);
         return 1;
+    }
+
+    if (array_key_exists('test-zip', $config) && $config['test-zip'] === true) {
+        $expectedZipFilename = $config['zip-name'];
+        $expectedZipFilepath = __DIR__ . '/expected-zip/' . $expectedZipFilename;
+
+        $buildZIPArchiveCommandHandler->buildZIPArchiveFile(
+            $workspaceID,
+            __DIR__ . '/workspace/' . $expectedZipFilename
+        );
+
+        // how to test ZIP files are identical ?
     }
 
     echo ' - module ' . $moduleName . ' built successfully' . PHP_EOL;
