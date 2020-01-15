@@ -6,8 +6,9 @@ class ComposerInstaller
 {
     public function installDependencies($targetDirectory)
     {
-        $commandScript = 'php composer.phar install --no-dev --optimize-autoloader -d '.$targetDirectory;
+        $commandScript = 'php composer.phar install --no-dev --optimize-autoloader -d '.$targetDirectory.' &> /dev/null';
 
-        exec($commandScript);
+        $output = null;
+        exec($commandScript, $output);
     }
 }

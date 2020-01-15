@@ -9,46 +9,58 @@ use PrestaShopTests\Integration\FolderComparator;
 $buildZIPArchiveCommandHandler = new BuildZIPArchiveCommandHandler(__DIR__ . '/workspace/');
 $folderComparator = new FolderComparator();
 
-// ------------ blockreassurance ------------
+$modulesToTest = [
+    'blockreassurance',
+    'gsitemap',
+    // 'autoupgrade', security issues found because of outdated twig version
+    'dashactivity',
+    'gamification',
+];
 $workspaceID = 100;
-$moduleFolderpath = __DIR__ . '/module-samples/blockreassurance';
-$expectedModuleFolderpath = __DIR__ . '/expected/blockreassurance';
-$workspaceFolderpath = __DIR__ . '/workspace/' . $workspaceID;
-$buildZIPArchiveCommandHandler->createWorkspace($workspaceID);
-$buildZIPArchiveCommandHandler->copyModuleFolderIntoWorkspace($workspaceID, $moduleFolderpath);
-$buildZIPArchiveCommandHandler->checkComposerDependencies($workspaceID);
-$buildZIPArchiveCommandHandler->removeUnwantedFilesAndDirectories($workspaceID);
-$buildZIPArchiveCommandHandler->installComposerDependencies($workspaceID);
 
-// blockreassurance test validation
-$check = $folderComparator->compareFolders($expectedModuleFolderpath, $workspaceFolderpath, '');
-if (!empty($check)) {
+function printErrorsList($moduleName, $list)
+{
+    echo "\033[31m";
+
     $message = sprintf(
-        'Test failed, got differences between expected folder and workspace folder : %s',
-        ' - ' . PHP_EOL . implode(PHP_EOL . ' - ', $check)
+        'Test failed for module %s, got differences between expected folder and workspace folder :',
+        $moduleName
     );
 
-    throw new \RuntimeException($message);
+    echo $message . PHP_EOL;
+
+    foreach ($list as $item) {
+        echo ' - ' . $item . PHP_EOL;
+    }
+
+    echo "\033[37m";
 }
 
-// ------------ gsitemap ------------
-$workspaceID = 101;
-$moduleFolderpath = __DIR__ . '/module-samples/gsitemap';
-$expectedModuleFolderpath = __DIR__ . '/expected/gsitemap';
-$workspaceFolderpath = __DIR__ . '/workspace/' . $workspaceID;
-$buildZIPArchiveCommandHandler->createWorkspace($workspaceID);
-$buildZIPArchiveCommandHandler->copyModuleFolderIntoWorkspace($workspaceID, $moduleFolderpath);
-$buildZIPArchiveCommandHandler->checkComposerDependencies($workspaceID);
-$buildZIPArchiveCommandHandler->removeUnwantedFilesAndDirectories($workspaceID);
-$buildZIPArchiveCommandHandler->installComposerDependencies($workspaceID);
+foreach ($modulesToTest as $module) {
+    $workspaceID++;
+    $moduleFolderpath = __DIR__ . '/module-samples/' . $module;
+    $expectedModuleFolderpath = __DIR__ . '/expected/' . $module;
+    $workspaceFolderpath = __DIR__ . '/workspace/' . $workspaceID;
 
-// blockreassurance test validation
-$check = $folderComparator->compareFolders($expectedModuleFolderpath, $workspaceFolderpath, '');
-if (!empty($check)) {
-    $message = sprintf(
-        'Test failed, got differences between expected folder and workspace folder : %s',
-        ' - ' . PHP_EOL . implode(PHP_EOL . ' - ', $check)
-    );
+    $buildZIPArchiveCommandHandler->createWorkspace($workspaceID);
+    $buildZIPArchiveCommandHandler->copyModuleFolderIntoWorkspace($workspaceID, $moduleFolderpath);
+    $buildZIPArchiveCommandHandler->checkComposerDependencies($workspaceID);
+    $buildZIPArchiveCommandHandler->removeUnwantedFilesAndDirectories($workspaceID);
+    $buildZIPArchiveCommandHandler->installComposerDependencies($workspaceID);
 
-    throw new \RuntimeException($message);
+    $check = $folderComparator->compareFolders($expectedModuleFolderpath, $workspaceFolderpath, '');
+    $check2 = $folderComparator->compareFolders($workspaceFolderpath, $expectedModuleFolderpath, '');
+    if (!empty($check)) {
+        printErrorsList($module, $check);
+        return 1;
+    }
+    if (!empty($check2)) {
+        printErrorsList($module, $check2);
+        return 1;
+    }
+
+    echo ' - module ' . $module . ' built successfully' . PHP_EOL;
 }
+
+echo "Integration tests run successfully" . PHP_EOL;
+return 0;

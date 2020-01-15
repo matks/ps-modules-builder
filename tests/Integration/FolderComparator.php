@@ -7,7 +7,16 @@ namespace PrestaShopTests\Integration;
  */
 class FolderComparator
 {
-    private $blacklist = ['.', '..', '.git'];
+    private $blacklist = [
+        '.',
+        '..',
+        '.git',
+        'autoload.php',
+        'autoload_classmap.php',
+        'autoload_static.php',
+        'autoload_real.php',
+        'ClassLoader.php',
+    ];
 
     /**
      * @param $folderA

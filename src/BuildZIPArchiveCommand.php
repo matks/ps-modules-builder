@@ -3,6 +3,7 @@
 namespace PrestaShop\ModuleBuilder;
 
 use Symfony\Component\Console\Command\Command;
+use Symfony\Component\Console\Input\InputArgument;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
 
@@ -15,19 +16,31 @@ class BuildZIPArchiveCommand extends Command
      */
     private $commandHandler;
 
+    /**
+     * @var string
+     */
+    private $workspaceDirectory;
+
     public function __construct($name = null)
     {
-        $this->commandHandler = new BuildZIPArchiveCommandHandler(__DIR__ . '/../var/');
+        $this->workspaceDirectory = __DIR__ . '/../var/';
+        $this->commandHandler = new BuildZIPArchiveCommandHandler($this->workspaceDirectory);
 
         parent::__construct($name);
     }
 
+    protected function configure()
+    {
+        $this
+            ->setDescription('Build ZIP archive for given module')
+            ->addArgument('module-folder', InputArgument::REQUIRED, 'module folder location');
+    }
+
     protected function execute(InputInterface $input, OutputInterface $output)
     {
+        $moduleFolderpath = $input->getArgument('module-folder');
+
         $workspaceID = md5(rand(0, 9999));
-        // for debug only
-        $workspaceID = 1;
-        $moduleFolderpath = __DIR__ . '/../tests/Integration/module-samples/blockreassurance';
 
         // 1. create temporary workspace
         $this->commandHandler->createWorkspace($workspaceID);
@@ -40,10 +53,22 @@ class BuildZIPArchiveCommand extends Command
         // 5. install composer dependencies
         $this->commandHandler->installComposerDependencies($workspaceID);
         // 6. check prestashop security practices are valid
-
+        // @todo
         // 7. build zip archive
-
+        $moduleInformations = $this->commandHandler->extractModuleInformationsFromWorkspace($workspaceID);
+        $zipFileName = sprintf(
+            '%s-%s.zip',
+            $moduleInformations->moduleName,
+            $moduleInformations->versionNumber
+        );
+        $this->commandHandler->buildZIPArchiveFile(
+            $workspaceID,
+            $this->workspaceDirectory . DIRECTORY_SEPARATOR . $zipFileName
+        );
         // 8. delete workspace
+        $this->commandHandler->deleteWorkspace($workspaceID);
+
+        $output->writeln(sprintf('<info>%s ZIP archive built with success</info>', $zipFileName));
 
         return 0;
     }

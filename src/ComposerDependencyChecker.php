@@ -20,7 +20,6 @@ class ComposerDependencyChecker
         $this->filesystem = $filesystem;
     }
 
-
     public function checkDependencies($targetPath)
     {
         $composerLockFile = $targetPath . '/composer.lock';
