@@ -2,6 +2,7 @@
 
 namespace PrestaShop\ModuleBuilder;
 
+use PrestaShop\ModuleBuilder\Exception\FailedToBuildZIPArchiveException;
 use Symfony\Component\Filesystem\Filesystem;
 
 class ModuleInfosExtractor
@@ -22,7 +23,7 @@ class ModuleInfosExtractor
     public function extractModuleInformations($moduleFolderPath)
     {
         if (!$this->filesystem->exists($moduleFolderPath . '/config.xml')) {
-            throw new \RuntimeException('Cannot extract module information, no config.xml file');
+            throw new FailedToBuildZIPArchiveException('Cannot extract module information, no config.xml file');
         }
 
         $xmlContent = file_get_contents($moduleFolderPath . '/config.xml');
@@ -31,10 +32,10 @@ class ModuleInfosExtractor
         $data = json_decode($json);
 
         if (!array_key_exists('name', $data)) {
-            throw new \RuntimeException('Cannot extract module name from config.xml file');
+            throw new FailedToBuildZIPArchiveException('Cannot extract module name from config.xml file');
         }
         if (!array_key_exists('version', $data)) {
-            throw new \RuntimeException('Cannot extract module version number from config.xml file');
+            throw new FailedToBuildZIPArchiveException('Cannot extract module version number from config.xml file');
         }
 
         return new ModuleInfos(

@@ -2,6 +2,7 @@
 
 namespace PrestaShop\ModuleBuilder;
 
+use PrestaShop\ModuleBuilder\Exception\SecurityIssuesInComposerDependenciesException;
 use SensioLabs\Security\SecurityChecker;
 use Symfony\Component\Filesystem\Filesystem;
 
@@ -34,7 +35,9 @@ class ComposerDependencyChecker
         $alerts = json_decode((string)$result, true);
 
         if (false === empty($alerts)) {
-            throw new \RuntimeException('Found security issues in composer dependencies, please check sensiolabs/security-checker report !');
+            throw new SecurityIssuesInComposerDependenciesException(
+                'Found security issues in composer dependencies, please check sensiolabs/security-checker report !'
+            );
         }
     }
 }
