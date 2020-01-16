@@ -21,6 +21,10 @@ $modulesToTest = [
 ];
 $workspaceID = 100;
 
+/**
+ * @param string $moduleName
+ * @param string[] $list
+ */
 function printErrorsList($moduleName, $list)
 {
     echo "\033[31m";
@@ -36,6 +40,26 @@ function printErrorsList($moduleName, $list)
         echo ' - ' . $item . PHP_EOL;
     }
 
+    echo "\033[37m";
+}
+
+/**
+ * @param string $message
+ */
+function printErrorMessage($message)
+{
+    echo "\033[31m";
+    echo $message;
+    echo "\033[37m";
+}
+
+/**
+ * @param string $message
+ */
+function printSuccessMessage($message)
+{
+    echo "\033[32m";
+    echo $message;
     echo "\033[37m";
 }
 
@@ -79,10 +103,15 @@ foreach ($modulesToTest as $moduleName => $config) {
         );
 
         // how to test ZIP files are identical ?
+        if (!file_exists(__DIR__ . '/workspace/' . $expectedZipFilename)) {
+            printErrorMessage(sprintf('Error: %s ZIP file was not built', $expectedZipFilename));
+            return 1;
+        }
     }
 
-    echo ' - module ' . $moduleName . ' built successfully' . PHP_EOL;
+    printSuccessMessage(' - module ' . $moduleName . ' built successfully' . PHP_EOL);
 }
 
-echo "Integration tests run successfully" . PHP_EOL;
+printSuccessMessage("Integration tests run successfully" . PHP_EOL);
+
 return 0;

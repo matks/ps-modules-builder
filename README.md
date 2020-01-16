@@ -28,3 +28,11 @@ ZIP archives are built into the `var` folder.
 ```
 $ php tests/Integration/run.php
 ```
+
+## Todo
+
+- allow dry-run option to check if ZIP can be built without doing it
+- check for PS security practices
+- handle custom built steps from module itself
+- strengthen steps, especially the ones using `exec()`
+- add a progress bar
