@@ -80,8 +80,8 @@ foreach ($modulesToTest as $moduleName => $config) {
 
     echo implode(PHP_EOL, $output).PHP_EOL;
 
-    $check = $folderComparator->compareFolders($expectedModuleFolderpath, $workspaceFolderpath, '');
-    $check2 = $folderComparator->compareFolders($workspaceFolderpath, $expectedModuleFolderpath, '');
+    $check = $folderComparator->compareFolders($expectedModuleFolderpath, $workspaceFolderpath, __DIR__);
+    $check2 = $folderComparator->compareFolders($workspaceFolderpath, $expectedModuleFolderpath, __DIR__);
     if (!empty($check)) {
         printErrorsList($moduleName, $check);
         return 255;
