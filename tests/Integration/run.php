@@ -82,6 +82,8 @@ foreach ($modulesToTest as $moduleName => $config) {
     $buildZIPArchiveCommandHandler->removeUnwantedFilesAndDirectories($workspaceID);
     $buildZIPArchiveCommandHandler->installComposerDependencies($workspaceID);
 
+    echo "Composer install done !";
+
     $check = $folderComparator->compareFolders($expectedModuleFolderpath, $workspaceFolderpath, '');
     $check2 = $folderComparator->compareFolders($workspaceFolderpath, $expectedModuleFolderpath, '');
     if (!empty($check)) {
