@@ -43,6 +43,8 @@ class FolderComparator
 
                 if (!file_exists($fileB)) {
                     $itemsDiffer[] = $fullPath . ' is missing';
+                    var_dump($fileB);
+                    var_dump($fileA);
                 } else {
                     if (is_file($fileB)) {
                         if (md5_file($fileA) !== md5_file($fileB)) {
