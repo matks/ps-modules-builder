@@ -83,6 +83,7 @@ foreach ($modulesToTest as $moduleName => $config) {
     $buildZIPArchiveCommandHandler->installComposerDependencies($workspaceID);
 
     echo "Composer install done !";
+    exec('ls '.$workspaceFolderpath.'/vendor');echo PHP_EOL;
 
     $check = $folderComparator->compareFolders($expectedModuleFolderpath, $workspaceFolderpath, '');
     $check2 = $folderComparator->compareFolders($workspaceFolderpath, $expectedModuleFolderpath, '');
