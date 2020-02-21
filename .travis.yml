@@ -1,0 +1,24 @@
+language: php
+
+services:
+  - mysql
+
+addons:
+  chrome: stable
+  apt:
+    packages:
+      - zip
+
+os: linux
+
+php:
+  - 7.1
+  - 7.2
+  - 7.3
+
+before_script:
+ - composer install
+ - download_composer_phar.sh
+
+script:
+ - php tests/Integration/run.php
