@@ -12,13 +12,12 @@ addons:
 os: linux
 
 php:
-  - 7.1
   - 7.2
   - 7.3
 
 before_script:
  - composer install
- - download_composer_phar.sh
+ - bash download_composer_phar.sh
 
 script:
  - php tests/Integration/run.php
