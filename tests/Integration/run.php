@@ -86,11 +86,11 @@ foreach ($modulesToTest as $moduleName => $config) {
     $check2 = $folderComparator->compareFolders($workspaceFolderpath, $expectedModuleFolderpath, '');
     if (!empty($check)) {
         printErrorsList($moduleName, $check);
-        return 1;
+        exit(1);
     }
     if (!empty($check2)) {
         printErrorsList($moduleName, $check2);
-        return 1;
+        exit(1);
     }
 
     if (array_key_exists('test-zip', $config) && $config['test-zip'] === true) {
@@ -105,7 +105,7 @@ foreach ($modulesToTest as $moduleName => $config) {
         // how to test ZIP files are identical ?
         if (!file_exists(__DIR__ . '/workspace/' . $expectedZipFilename)) {
             printErrorMessage(sprintf('Error: %s ZIP file was not built', $expectedZipFilename));
-            return 1;
+            exit(1);
         }
     }
 
@@ -114,4 +114,4 @@ foreach ($modulesToTest as $moduleName => $config) {
 
 printSuccessMessage("Integration tests run successfully" . PHP_EOL);
 
-return 0;
+exit(0);
