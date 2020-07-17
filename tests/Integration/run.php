@@ -27,8 +27,6 @@ $workspaceID = 100;
  */
 function printErrorsList($moduleName, $list)
 {
-    echo "\033[31m";
-
     $message = sprintf(
         'Test failed for module %s, got differences between expected folder and workspace folder :',
         $moduleName
@@ -39,8 +37,6 @@ function printErrorsList($moduleName, $list)
     foreach ($list as $item) {
         echo ' - ' . $item . PHP_EOL;
     }
-
-    echo "\033[37m";
 }
 
 /**
@@ -48,9 +44,7 @@ function printErrorsList($moduleName, $list)
  */
 function printErrorMessage($message)
 {
-    echo "\033[31m";
     echo $message;
-    echo "\033[37m";
 }
 
 /**
@@ -58,9 +52,7 @@ function printErrorMessage($message)
  */
 function printSuccessMessage($message)
 {
-    echo "\033[32m";
     echo $message;
-    echo "\033[37m";
 }
 
 foreach ($modulesToTest as $moduleName => $config) {
@@ -82,15 +74,15 @@ foreach ($modulesToTest as $moduleName => $config) {
     $buildZIPArchiveCommandHandler->removeUnwantedFilesAndDirectories($workspaceID);
     $buildZIPArchiveCommandHandler->installComposerDependencies($workspaceID);
 
-    $check = $folderComparator->compareFolders($expectedModuleFolderpath, $workspaceFolderpath, '');
-    $check2 = $folderComparator->compareFolders($workspaceFolderpath, $expectedModuleFolderpath, '');
+    $check = $folderComparator->compareFolders($expectedModuleFolderpath, $workspaceFolderpath, __DIR__);
+    $check2 = $folderComparator->compareFolders($workspaceFolderpath, $expectedModuleFolderpath, __DIR__);
     if (!empty($check)) {
         printErrorsList($moduleName, $check);
-        return 1;
+        exit(1);
     }
     if (!empty($check2)) {
         printErrorsList($moduleName, $check2);
-        return 1;
+        exit(1);
     }
 
     if (array_key_exists('test-zip', $config) && $config['test-zip'] === true) {
@@ -105,7 +97,7 @@ foreach ($modulesToTest as $moduleName => $config) {
         // how to test ZIP files are identical ?
         if (!file_exists(__DIR__ . '/workspace/' . $expectedZipFilename)) {
             printErrorMessage(sprintf('Error: %s ZIP file was not built', $expectedZipFilename));
-            return 1;
+            exit(1);
         }
     }
 

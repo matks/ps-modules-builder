@@ -1,0 +1,20 @@
+language: php
+
+addons:
+  chrome: stable
+  apt:
+    packages:
+      - zip
+
+os: linux
+
+php:
+  - 7.2
+  - 7.3
+
+before_script:
+  - composer install
+  - bash download_composer_phar.sh
+
+script:
+  - php tests/Integration/run.php
