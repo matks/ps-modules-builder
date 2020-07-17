@@ -35,11 +35,13 @@ class BadFilesDeletor
         $this->filesBlacklist = [
             '.gitignore',
             '.php_cs.dist',
-            '.travis.yml'
+            '.travis.yml',
+            '.git',
         ];
 
         $this->directoriesBlacklist = [
             '.github',
+            '.git',
             'test',
             'tests',
         ];
