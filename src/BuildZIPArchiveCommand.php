@@ -86,7 +86,7 @@ class BuildZIPArchiveCommand extends Command
             if ($isDryRun === false) {
                 $this->commandHandler->buildZIPArchiveFile(
                     $workspaceID,
-                    $this->workspaceDirectory . DIRECTORY_SEPARATOR . $zipFileName
+                    $this->workspaceDirectory . $zipFileName
                 );
             }
         } catch (\Exception $e) {

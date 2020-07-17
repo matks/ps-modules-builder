@@ -7,9 +7,11 @@ class ZIPArchiveBuilder
     public function buildZIPArchiveFile($targetDirectory, $zipFilename)
     {
         $commandScript = sprintf(
-            'zip %s -r %s',
-            $zipFilename,
-            $targetDirectory
+            'pushd %s
+            zip %s -r .
+            popd',
+            $targetDirectory,
+            $zipFilename
         );
 
         $output = null;
